@@ -1,0 +1,109 @@
+.teams-page {
+  padding: 140px 5% 60px;
+  max-width: 1400px;
+  margin: auto;
+}
+
+.teams-header {
+    text-align: center; 
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+.teams-header .hero-subtitle {
+    text-align: center; /* Centers the text alignment */
+    margin: 0 auto 30px; /* The 'auto' on left/right centers the block itself */
+    max-width: 600px;    /* Keeps the line length readable */
+    display: block;      /* Ensures it behaves as a block for the margin auto */
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.team-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.team-logo-container {
+  width: 180px; 
+  height: 180px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  transition: transform 0.3s ease; 
+}
+
+.team-card-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  filter: drop-shadow(
+    0 15px 25px rgba(0, 0, 0, 0.4)
+  ); 
+}
+
+.team-card-info {
+  text-align: center;
+}
+
+.team-card-info h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.view-link {
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.team-card:hover .view-link {
+  opacity: 1;
+}
+
+.team-card:hover .team-logo-container {
+  transform: scale(1.1);
+}
+
+
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .teams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+  }
+
+  .team-logo-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .team-card-info h3 {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,117 @@
+.positions-page {
+    padding: 140px 5% 80px;
+    max-width: 1100px; /* Slightly narrower for a tighter 2-column feel */
+    margin: auto;
+}
+
+.positions-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.positions-header .hero-subtitle {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 600px;
+    display: block;
+}
+
+.positions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px; /* Reduced gap from 40px */
+}
+
+.pos-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px; /* Slightly smaller radius */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s ease;
+    text-decoration: none;
+    backdrop-filter: blur(15px);
+}
+
+.pos-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* FIX: Reduced height from 250px to 210px so more of the photo is visible */
+.pos-image-wrapper {
+    width: 100%;
+    height: 210px; 
+    position: relative;
+    overflow: hidden;
+}
+
+.pos-main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    object-position: center; /* Ensures the action stays centered */
+    transition: transform 0.6s ease;
+}
+
+.pos-card:hover .pos-main-img {
+    transform: scale(1.05); /* Reduced scale zoom so it doesn't cut while hovering */
+}
+
+.pos-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+}
+
+/* FIX: Reduced padding from 30px to 22px to shrink the bottom section */
+.pos-content {
+    padding: 22px; 
+    text-align: left;
+}
+
+.pos-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(233, 196, 106, 0.1);
+    color: var(--accent);
+    border-radius: 5px;
+    font-size: 11px; /* Smaller tag */
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.pos-content h3 {
+    font-size: 24px; /* Reduced from 28px */
+    font-weight: 800;
+    color: white;
+    margin-bottom: 6px;
+}
+
+.pos-content p {
+    color: var(--text-muted);
+    font-size: 14px; /* Reduced from 15px */
+    margin-bottom: 18px; /* Reduced from 25px */
+    line-height: 1.4;
+}
+
+.explore-link {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px; /* Slightly smaller link */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 900px) {
+    .positions-grid {
+        grid-template-columns: 1fr;
+    }
+}
