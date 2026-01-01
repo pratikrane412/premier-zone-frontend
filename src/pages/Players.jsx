@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import "../styles/players.css";
+import "../styles/Players.css";
 
 export default function Players() {
   const [players, setPlayers] = useState([]);

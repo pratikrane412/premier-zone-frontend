@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import '../styles/positions.css';
+import '../styles/Positions.css';
 
 export default function Positions() {
     const [positions, setPositions] = useState([]);
