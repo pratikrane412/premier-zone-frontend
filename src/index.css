@@ -1,68 +1,53 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  /* High-end Premium Palette */
+  --color-brand-primary: #3d195b; /* Deep PL Purple */
+  --color-brand-secondary: #00ff87; /* Vibrant Neon Green */
+  --color-brand-accent: #7c3aed; /* Electric Violet */
+  --color-slate-surface: #f8fafc;
+  --color-slate-border: #e2e8f0;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
+@layer base {
+  html {
+    font-family: var(--font-jakarta);
+  }
+  body {
+    /* Subtle mesh background to prevent "flat" white look */
     background-color: #ffffff;
+    background-image:
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.03) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.03) 0, transparent 50%);
+    @apply text-slate-900 antialiased min-h-screen selection:bg-brand-secondary selection:text-brand-primary;
   }
-  a:hover {
-    color: #747bff;
+}
+
+@layer components {
+  /* The "Premium White" Card */
+  .premium-card {
+    @apply bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-sm rounded-[2rem] transition-all duration-500;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .premium-card:hover {
+    @apply shadow-[0_20px_50px_rgba(61,25,91,0.1)] border-brand-primary/10 -translate-y-2;
   }
+
+  .text-gradient {
+    @apply bg-gradient-to-br from-brand-primary via-brand-accent to-brand-primary bg-clip-text text-transparent;
+  }
+}
+
+/* Smooth custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-1.5;
+}
+::-webkit-scrollbar-track {
+  @apply bg-white;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300;
 }

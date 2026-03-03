@@ -5,7 +5,7 @@ import Teams from './pages/Teams';
 import Players from './pages/Players';
 import Positions from './pages/Positions';
 import Nations from './pages/Nations';
-import "./styles/global.css";
+import './index.css'
 
 export default function App() {
   return (
