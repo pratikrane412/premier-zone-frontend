@@ -5,11 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
-  Target,
   User,
-  Trophy,
-  Zap,
-  BarChart3,
+  ArrowRight,
+  Filter
 } from "lucide-react";
 
 export default function Players() {
@@ -55,198 +53,168 @@ export default function Players() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="flex flex-col items-center gap-3"
-        >
-          <BarChart3 size={40} className="text-brand-primary" />
-          <span className="text-[10px] font-black tracking-[4px] uppercase text-slate-400">
-            Processing Stats
-          </span>
-        </motion.div>
+      <div className="min-h-screen flex items-center justify-center bg-heritage-base">
+        <div className="w-12 h-px bg-heritage-border relative overflow-hidden">
+          <motion.div 
+            animate={{ x: ["-100%", "100%"] }}
+            transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute inset-0 bg-heritage-accent"
+          />
+        </div>
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pt-32 pb-20 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Navigation & Header */}
-        <header className="mb-12 space-y-6">
-          <Link
-            to="/teams"
-            className="group inline-flex items-center gap-2 text-slate-400 hover:text-brand-primary transition-colors font-bold text-xs uppercase tracking-widest"
-          >
-            <ChevronLeft
-              size={16}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            Back to Directory
-          </Link>
-
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-2"
-            >
-              <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-900 leading-none">
-                {teamFilter
-                  ? teamFilter.replace(/-/g, " ")
-                  : posFilter
-                    ? `${posFilter}s`
-                    : nationFilter
-                      ? `${nationFilter} Talent`
-                      : "Premier League"}
-                <span className="text-brand-primary block md:inline md:ml-4 italic">
-                  Squad.
-                </span>
-              </h1>
-              <p className="text-slate-500 font-medium flex items-center gap-2">
-                <Target size={14} className="text-brand-secondary" />
-                Performance metrics for the 2024/25 Season
-              </p>
-            </motion.div>
-
-            <div className="flex items-center gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm self-start">
-              <div className="px-4 py-2 bg-slate-50 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400">
-                Results: {players.length}
-              </div>
-              <div className="px-4 py-2 bg-brand-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-brand-primary/20">
-                Page {page}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Professional Stats Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white border border-slate-100 rounded-[2.5rem] shadow-[0_20px_80px_rgba(0,0,0,0.04)] overflow-hidden"
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen pt-40 pb-20 px-8 max-w-[1400px] mx-auto"
+    >
+      {/* Editorial Header */}
+      <header className="mb-20 space-y-12">
+        <Link
+          to="/teams"
+          className="group inline-flex items-center gap-3 text-heritage-text/40 hover:text-heritage-accent transition-colors font-black text-[10px] uppercase tracking-[4px]"
         >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/50">
-                  <th className="py-6 px-8 text-[10px] font-black uppercase tracking-[2px] text-slate-400">
-                    Player Profile
-                  </th>
-                  {!teamFilter && (
-                    <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-slate-400 text-center">
-                      Club
-                    </th>
-                  )}
-                  <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-slate-400 text-center">
-                    Nation
-                  </th>
-                  <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-slate-400 text-center">
-                    Pos
-                  </th>
-                  <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-slate-400 text-center">
-                    App
-                  </th>
-                  <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-brand-primary text-center bg-brand-primary/5">
-                    Goals
-                  </th>
-                  <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[2px] text-brand-primary text-center bg-brand-primary/5">
-                    Assists
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                <AnimatePresence mode="popLayout">
-                  {players.map((p, index) => (
-                    <motion.tr
-                      layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ delay: index * 0.02 }}
-                      key={p.player_name + index}
-                      className="hover:bg-slate-50/80 transition-all group"
-                    >
-                      <td className="py-5 px-8">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                            <User size={18} />
-                          </div>
-                          <p className="font-extrabold text-slate-900 group-hover:text-brand-primary transition-colors">
-                            {p.player_name}
-                          </p>
-                        </div>
-                      </td>
-                      {!teamFilter && (
-                        <td className="py-5 px-6 text-center">
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">
-                            {p.team_name.replace(/-/g, " ")}
-                          </span>
-                        </td>
-                      )}
-                      <td className="py-5 px-6 text-center">
-                        <span className="inline-block font-mono text-[11px] font-black text-slate-400 bg-white border border-slate-100 px-3 py-1 rounded-lg">
-                          {p.nation?.split(" ")[1]}
-                        </span>
-                      </td>
-                      <td className="py-5 px-6 text-center">
-                        <span className="text-[9px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-md uppercase tracking-widest">
-                          {p.position}
-                        </span>
-                      </td>
-                      <td className="py-5 px-6 text-center font-bold text-slate-400">
-                        {p.matches_played ?? 0}
-                      </td>
-                      <td className="py-5 px-6 text-center font-black text-brand-primary text-xl bg-brand-primary/[0.02]">
-                        {p.goals ?? 0}
-                      </td>
-                      <td className="py-5 px-6 text-center font-black text-brand-primary text-xl bg-brand-primary/[0.02]">
-                        {p.assists ?? 0}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+          <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Back to Directory
+        </Link>
 
-        {/* Modern Pagination Controls */}
-        {!teamFilter && (
-          <div className="mt-16 flex justify-center items-center gap-8">
-            <button
-              disabled={page === 1}
-              onClick={() => {
-                setPage((prev) => prev - 1);
-                window.scrollTo(0, 0);
-              }}
-              className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white border border-slate-200 text-slate-900 hover:border-brand-primary hover:text-brand-primary disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200/50 active:scale-90"
-            >
-              <ChevronLeft size={24} />
-            </button>
-
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-[3px] mb-2">
-                Current
-              </span>
-              <div className="w-14 h-14 flex items-center justify-center bg-brand-primary text-white rounded-2xl font-black text-xl shadow-2xl shadow-brand-primary/30">
-                {page}
-              </div>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 border-b border-heritage-border pb-12">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] font-black uppercase tracking-[5px] text-heritage-accent">Technical Roster</span>
+              <div className="h-px w-8 bg-heritage-accent"></div>
             </div>
-
-            <button
-              disabled={players.length < limit}
-              onClick={() => {
-                setPage((prev) => prev + 1);
-                window.scrollTo(0, 0);
-              }}
-              className="flex items-center justify-center w-14 h-14 rounded-2xl bg-white border border-slate-200 text-slate-900 hover:border-brand-primary hover:text-brand-primary disabled:opacity-20 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200/50 active:scale-90"
-            >
-              <ChevronRight size={24} />
-            </button>
+            <h1 className="text-6xl md:text-8xl font-serif italic text-heritage-text leading-none">
+              {teamFilter
+                ? teamFilter.replace(/-/g, " ")
+                : posFilter
+                  ? `${posFilter}s`
+                  : nationFilter
+                    ? `${nationFilter}`
+                    : "League"}
+              <span className="not-italic text-heritage-accent block md:inline md:ml-6 tracking-tighter">
+                Squad.
+              </span>
+            </h1>
+            <p className="text-lg text-heritage-muted max-w-xl leading-relaxed">
+              Detailed performance metrics and tactical profiles for the 2024/25 campaign.
+            </p>
           </div>
-        )}
+
+          <div className="flex items-center gap-4 bg-white p-4 border border-heritage-border shadow-sm self-start">
+            <div className="flex flex-col gap-1 pr-6 border-r border-heritage-border">
+              <span className="text-[9px] font-black text-heritage-text/40 uppercase tracking-widest text-center">Page</span>
+              <span className="text-xl font-serif italic text-heritage-text text-center">{page}</span>
+            </div>
+            <div className="pl-2">
+              <span className="text-[10px] font-black text-heritage-accent uppercase tracking-[2px]">Entries: {players.length}</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Editorial Table */}
+      <div className="bg-white border border-heritage-border overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-heritage-base border-b border-heritage-border">
+                <th className="py-8 px-10 text-[10px] font-black uppercase tracking-[4px] text-heritage-text/60">Professional Profile</th>
+                {!teamFilter && <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-text/60 text-center">Organisation</th>}
+                <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-text/60 text-center">Origin</th>
+                <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-text/60 text-center">Pos</th>
+                <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-text/60 text-center">App</th>
+                <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-accent text-center bg-heritage-accent/5">Gls</th>
+                <th className="py-8 px-6 text-[10px] font-black uppercase tracking-[4px] text-heritage-accent text-center bg-heritage-accent/5">Ast</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-heritage-border">
+              <AnimatePresence mode="popLayout">
+                {players.map((p, index) => (
+                  <motion.tr
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ delay: index * 0.01 }}
+                    key={p.player_name + index}
+                    className="hover:bg-heritage-base/50 transition-all group"
+                  >
+                    <td className="py-6 px-10">
+                      <div className="flex items-center gap-6">
+                        <div className="w-10 h-10 border border-heritage-border flex items-center justify-center text-heritage-text/20 group-hover:text-heritage-accent group-hover:border-heritage-accent transition-all duration-500">
+                          <User size={18} />
+                        </div>
+                        <div>
+                          <p className="font-serif italic text-xl text-heritage-text group-hover:text-heritage-accent transition-colors">{p.player_name}</p>
+                          <p className="text-[9px] font-black text-heritage-text/40 uppercase tracking-[2px]">Premier League Pro</p>
+                        </div>
+                      </div>
+                    </td>
+                    {!teamFilter && (
+                      <td className="py-6 px-6 text-center">
+                        <span className="text-[10px] font-black text-heritage-muted uppercase tracking-tighter">
+                          {p.team_name.replace(/-/g, " ")}
+                        </span>
+                      </td>
+                    )}
+                    <td className="py-6 px-6 text-center">
+                      <span className="inline-block font-sans text-[11px] font-medium text-heritage-text/60 px-3 py-1 border border-heritage-border group-hover:border-heritage-accent/40 transition-colors">
+                        {p.nation?.split(" ")[1]}
+                      </span>
+                    </td>
+                    <td className="py-6 px-6 text-center">
+                      <span className="text-[10px] font-black bg-heritage-text text-white px-2.5 py-1 uppercase tracking-widest">
+                        {p.position}
+                      </span>
+                    </td>
+                    <td className="py-6 px-6 text-center font-serif italic text-heritage-text/60">
+                      {p.matches_played ?? 0}
+                    </td>
+                    <td className="py-6 px-6 text-center font-serif italic text-heritage-accent text-2xl bg-heritage-accent/[0.02]">
+                      {p.goals ?? 0}
+                    </td>
+                    <td className="py-6 px-6 text-center font-serif italic text-heritage-accent text-2xl bg-heritage-accent/[0.02]">
+                      {p.assists ?? 0}
+                    </td>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {/* Editorial Pagination */}
+      {!teamFilter && (
+        <div className="mt-20 flex justify-center items-center gap-12">
+          <button
+            disabled={page === 1}
+            onClick={() => { setPage(prev => prev - 1); window.scrollTo(0, 0); }}
+            className="w-16 h-16 border border-heritage-border flex items-center justify-center text-heritage-text hover:border-heritage-accent hover:text-heritage-accent disabled:opacity-20 transition-all duration-500"
+          >
+            <ChevronLeft size={24} />
+          </button>
+
+          <div className="flex flex-col items-center">
+            <span className="text-[9px] font-black text-heritage-accent uppercase tracking-[4px] mb-2">Issue Tier</span>
+            <div className="text-3xl font-serif italic text-heritage-text">
+              {page}
+            </div>
+          </div>
+
+          <button
+            disabled={players.length < limit}
+            onClick={() => { setPage(prev => prev + 1); window.scrollTo(0, 0); }}
+            className="w-16 h-16 border border-heritage-border flex items-center justify-center text-heritage-text hover:border-heritage-accent hover:text-heritage-accent disabled:opacity-20 transition-all duration-500"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </div>
+      )}
+    </motion.div>
   );
 }

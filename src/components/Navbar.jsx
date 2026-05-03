@@ -1,109 +1,119 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronRight, Activity } from "lucide-react";
+import { Menu, X, ArrowRight, Search } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo1.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
-  // 1. Handle scroll to add depth when moving down the page
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Teams", href: "/teams" },
+    { name: "Clubs", href: "/teams" },
     { name: "Nations", href: "/nations" },
-    { name: "Positions", href: "/positions" },
+    { name: "Tactics", href: "/positions" },
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 border-b ${
+      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-700 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-xl py-3 border-slate-200 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
-          : "bg-white py-5 border-transparent"
+          ? "bg-heritage-base/90 backdrop-blur-md py-3 border-b border-heritage-border"
+          : "bg-transparent py-6 border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        {/* Logo Section */}
-        <motion.a
-          href="/"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3 group"
+      <div className="max-w-[1400px] mx-auto px-8 flex justify-between items-center">
+        {/* Logo / Masthead */}
+        <Link
+          to="/"
+          className="flex items-center gap-4 group"
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-brand-secondary/20 rounded-full blur-md scale-0 group-hover:scale-150 transition-transform duration-500"></div>
-            <img
-              src={logo}
-              alt="Logo"
-              className="h-10 w-auto object-contain relative z-10"
-            />
-          </div>
-          <span className="text-xl font-black tracking-tighter text-slate-900 uppercase">
-            Premier<span className="text-brand-primary italic">Zone</span>
+          <img
+            src={logo}
+            alt="Logo"
+            className="h-8 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-700"
+          />
+          <div className="h-6 w-px bg-heritage-border hidden sm:block"></div>
+          <span className="text-lg font-black tracking-[-1px] text-heritage-text uppercase">
+            Premier<span className="text-heritage-accent italic font-serif lowercase">Zone</span>
           </span>
-        </motion.a>
+        </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-10 items-center">
-          {navLinks.map((link, i) => (
-            <motion.a
+        {/* Desktop Editorial Navigation */}
+        <div className="hidden md:flex gap-12 items-center">
+          {navLinks.map((link) => (
+            <Link
               key={link.name}
-              href={link.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="relative text-[11px] font-black uppercase tracking-[2px] text-slate-400 hover:text-brand-primary transition-colors group"
+              to={link.href}
+              className={`relative text-[11px] font-black uppercase tracking-[3px] transition-all duration-500 group ${
+                location.pathname === link.href ? "text-heritage-accent" : "text-heritage-text/40 hover:text-heritage-text"
+              }`}
             >
               {link.name}
-              {/* Animated Underline */}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-secondary transition-all duration-300 group-hover:w-full"></span>
-            </motion.a>
+              {/* Fine Underline */}
+              <span className={`absolute -bottom-1 left-0 h-px bg-heritage-accent transition-all duration-700 ${
+                location.pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
+              }`}></span>
+            </Link>
           ))}
-
           
+          <button className="p-2 text-heritage-text/40 hover:text-heritage-accent transition-colors">
+            <Search size={18} />
+          </button>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden p-2 text-slate-900"
+          className="md:hidden p-2 text-heritage-text"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Editorial Sidebar */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-b border-slate-100 overflow-hidden"
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="md:hidden fixed inset-0 top-0 left-0 w-full h-screen bg-heritage-base z-[999] flex flex-col p-12 justify-center"
           >
-            <div className="flex flex-col p-8 gap-6">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="flex justify-between items-center text-2xl font-black text-slate-900 group"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.name}
-                  <ChevronRight
-                    size={20}
-                    className="text-brand-secondary group-hover:translate-x-2 transition-transform"
-                  />
-                </a>
-              ))}
+            <div className="space-y-8">
+              <p className="text-[10px] font-black uppercase tracking-[4px] text-heritage-accent">Menu</p>
+              <div className="flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className="flex justify-between items-end border-b border-heritage-border pb-4 group"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className="text-5xl font-serif italic text-heritage-text group-hover:text-heritage-accent transition-colors">
+                      {link.name}
+                    </span>
+                    <ArrowRight size={24} className="text-heritage-accent opacity-0 group-hover:opacity-100 transition-all -translate-x-4 group-hover:translate-x-0" />
+                  </Link>
+                ))}
+              </div>
             </div>
+            
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="absolute top-8 right-8 p-4 text-heritage-text"
+            >
+              <X size={32} strokeWidth={1} />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
