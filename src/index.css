@@ -1,63 +1,102 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Playfair Display", serif;
-  --font-sans: "Inter", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
 
-  /* Heritage Gallery Palette */
-  --color-heritage-base: #fafafa;
-  --color-heritage-text: #111827;
-  --color-heritage-muted: #6b7280;
-  --color-heritage-accent: #9d8a5e; /* Classic Muted Gold */
-  --color-heritage-border: #e5e7eb;
+  /* Glassmorphism Palette Tokens */
+  --color-glass-accent: #8b5cf6; /* Vibrant Violet */
+  --color-glass-highlight: #38bdf8; /* Sky Blue */
 }
 
 @layer base {
+  :root {
+    --glass-base: #f1f5f9;
+    --glass-surface: rgba(15, 23, 42, 0.05);
+    --glass-border: rgba(15, 23, 42, 0.08);
+    --glass-text: #0f172a;
+    --glass-muted: #475569;
+    --glass-card-bg: rgba(255, 255, 255, 0.8);
+    --glass-card-border: rgba(255, 255, 255, 0.5);
+    --glass-blob-opacity: 0.15;
+  }
+
+  .dark {
+    --glass-base: #0f172a;
+    --glass-surface: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-text: #f8fafc;
+    --glass-muted: #94a3b8;
+    --glass-card-bg: rgba(255, 255, 255, 0.05);
+    --glass-card-border: rgba(255, 255, 255, 0.1);
+    --glass-blob-opacity: 0.4;
+  }
+
   html {
     font-family: var(--font-sans);
     scroll-behavior: smooth;
-    @apply antialiased;
+    @apply antialiased text-[15px];
   }
+  
   body {
-    @apply bg-heritage-base text-heritage-text min-h-screen selection:bg-heritage-accent selection:text-white;
+    background-color: var(--glass-base);
+    color: var(--glass-text);
+    @apply min-h-screen selection:bg-glass-accent/30 overflow-x-hidden transition-colors duration-500;
   }
 
-  h1, h2, h3, h4, .font-serif {
-    font-family: var(--font-serif);
+  h1, h2, h3, h4 {
+    @apply font-extrabold tracking-tight;
   }
 }
 
 @layer components {
-  /* Premium Editorial Card */
-  .premium-card {
-    @apply bg-white border border-heritage-border rounded-none transition-all duration-700 ease-out;
+  /* The Core Glass Container */
+  .glass-card {
+    background-color: var(--glass-card-bg);
+    border: 1px solid var(--glass-card-border);
+    @apply backdrop-blur-xl rounded-[2rem] transition-all duration-500;
   }
 
-  .premium-card:hover {
-    @apply border-heritage-accent shadow-[0_20px_40px_-15px_rgba(157,138,94,0.1)];
+  .glass-card:hover {
+    @apply shadow-[0_20px_50px_-12px_rgba(139,92,246,0.25)];
+    border-color: var(--glass-accent);
   }
 
-  .btn-premium {
-    @apply inline-flex items-center justify-center px-8 py-3 bg-heritage-text text-white text-[11px] font-black uppercase tracking-[3px] rounded-none hover:bg-heritage-accent transition-colors duration-500;
+  /* Vibrant Glow Button */
+  .btn-glass {
+    @apply inline-flex items-center justify-center px-8 py-4 bg-glass-accent text-white font-bold rounded-2xl transition-all duration-300 active:scale-95 shadow-lg shadow-glass-accent/30 hover:shadow-glass-accent/50 hover:-translate-y-0.5;
   }
 
-  .text-brand-gradient {
-    @apply bg-gradient-to-br from-heritage-text via-heritage-accent to-heritage-text bg-clip-text text-transparent;
+  .btn-glass-outline {
+    background-color: var(--glass-surface);
+    border: 1px solid var(--glass-border);
+    color: var(--glass-text);
+    @apply inline-flex items-center justify-center px-8 py-4 backdrop-blur-md font-bold rounded-2xl transition-all duration-300 hover:bg-glass-accent/10;
   }
 
-  .fine-line {
-    @apply h-px w-full bg-heritage-border;
+  /* Text Gradient */
+  .text-glass-gradient {
+    @apply bg-gradient-to-br from-current via-current to-current/40 bg-clip-text text-transparent;
+  }
+
+  .text-accent-gradient {
+    @apply bg-gradient-to-r from-glass-accent to-glass-highlight bg-clip-text text-transparent;
+  }
+
+  /* Background Blobs */
+  .blob {
+    opacity: var(--glass-blob-opacity);
+    @apply absolute -z-10 blur-[120px] rounded-full animate-pulse transition-opacity duration-700;
   }
 }
 
-/* Elegant custom scrollbar */
+/* Smooth custom scrollbar */
 ::-webkit-scrollbar {
-  @apply w-1;
+  @apply w-2;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-heritage-base;
+  background-color: var(--glass-base);
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-heritage-border rounded-none hover:bg-heritage-accent;
+  @apply bg-glass-accent/20 rounded-full hover:bg-glass-accent/40;
 }

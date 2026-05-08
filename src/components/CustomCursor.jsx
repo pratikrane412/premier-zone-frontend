@@ -13,7 +13,7 @@ export default function CustomCursor() {
     };
 
     const handleMouseOver = (e) => {
-      if (e.target.closest("button, a, .premium-card")) {
+      if (e.target.closest("button, a, .glass-card")) {
         setIsHovering(true);
       } else {
         setIsHovering(false);

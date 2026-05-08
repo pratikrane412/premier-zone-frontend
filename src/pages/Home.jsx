@@ -22,110 +22,96 @@ export default function Home() {
       variants={containerVars}
       initial="initial"
       animate="animate"
-      className="min-h-screen pt-40 pb-20 px-8 max-w-[1400px] mx-auto"
+      className="min-h-screen pt-24 md:pt-28 lg:pt-32 pb-20 px-4 md:px-8 max-w-[1400px] mx-auto relative"
     >
-      {/* Editorial Spread Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-start">
+      {/* Dynamic Background Blobs */}
+      <div className="blob w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-glass-accent/20 top-[-5%] right-[-5%]"></div>
+      <div className="blob w-[200px] md:w-[400px] h-[200px] md:h-[400px] bg-glass-highlight/20 bottom-[-5%] left-[-5%] animation-delay-2000"></div>
+      
+      {/* Glass Hero Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center relative z-10">
         
-        {/* Left Column: Masthead & Main Content */}
-        <div className="lg:col-span-7 space-y-16">
-          <motion.div variants={itemVars} className="space-y-6">
-            <div className="flex items-center gap-4">
-              <span className="text-[10px] font-black uppercase tracking-[5px] text-heritage-accent">Issue No. 24/25</span>
-              <div className="h-px flex-1 bg-heritage-border"></div>
+        {/* Left Content */}
+        <div className="space-y-6 md:space-y-10">
+          <motion.div variants={itemVars} className="space-y-4 md:space-y-6 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+              <span className="w-2 h-2 rounded-full bg-glass-highlight animate-pulse shadow-[0_0_10px_#38bdf8]"></span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-glass-highlight">24/25 Season Live</span>
             </div>
             
-            <h1 className="text-7xl md:text-9xl font-serif italic text-heritage-text leading-[0.85] tracking-tight">
-              The Art of <br />
-              <span className="not-italic text-heritage-accent">The Pitch.</span>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tighter">
+              <span className="text-glass-text">The New Era of</span> <br />
+              <span className="text-accent-gradient">Football Data.</span>
             </h1>
             
-            <p className="text-xl text-heritage-muted max-w-lg leading-relaxed font-sans">
-              A curated perspective on the world's most prestigious football league. 
-              Where high-fidelity data meets timeless editorial design.
+            <p className="text-base md:text-xl text-glass-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
+              Dive into the world's most competitive league with high-fidelity analytics 
+              wrapped in a premium, immersive interface.
             </p>
           </motion.div>
 
-          <motion.div variants={itemVars} className="flex flex-col sm:flex-row gap-8 items-start">
-            <Link to="/teams" className="btn-premium group">
+          <motion.div variants={itemVars} className="flex flex-wrap gap-4 md:gap-6 items-center justify-center lg:justify-start">
+            <Link to="/teams" className="btn-glass group w-full sm:w-auto">
               Explore Clubs
-              <ArrowRight size={16} className="ml-3 group-hover:translate-x-2 transition-transform duration-500" />
+              <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
-            
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-black uppercase tracking-[3px] text-heritage-text/40">Current Status</span>
-              <div className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-heritage-accent animate-pulse"></div>
-                <span className="text-sm font-serif italic text-heritage-text">Live Database Syncing</span>
-              </div>
-            </div>
+            <Link to="/players" className="btn-glass-outline w-full sm:w-auto">
+              View Players
+            </Link>
           </motion.div>
 
-          {/* Editorial Stats Row */}
-          <motion.div variants={itemVars} className="grid grid-cols-2 gap-12 pt-12 border-t border-heritage-border">
-            <div className="space-y-4">
-              <p className="text-4xl font-serif italic text-heritage-text">500<span className="text-heritage-accent">+</span></p>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-[3px] text-heritage-text">Active Professionals</p>
-                <p className="text-xs text-heritage-muted">Detailed performance profiles and tactical insights.</p>
+          {/* Glass Stats Grid */}
+          <motion.div variants={itemVars} className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 pt-6 md:pt-10">
+            {[
+              { label: "Elite Pros", val: "500+" },
+              { label: "Global Clubs", val: "20" },
+              { label: "Nations", val: "60+" }
+            ].map((stat, i) => (
+              <div key={i} className="p-4 md:p-6 glass-card !rounded-2xl border-white/5 hover:border-white/20 text-center lg:text-left">
+                <p className="text-2xl md:text-3xl font-black">{stat.val}</p>
+                <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-glass-muted mt-1">{stat.label}</p>
               </div>
-            </div>
-            <div className="space-y-4">
-              <p className="text-4xl font-serif italic text-heritage-text">60<span className="text-heritage-accent">+</span></p>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-[3px] text-heritage-text">Global Identities</p>
-                <p className="text-xs text-heritage-muted">A diverse international distribution of world-class talent.</p>
-              </div>
-            </div>
+            ))}
           </motion.div>
         </div>
 
-        {/* Right Column: Visual Centerpiece */}
-        <div className="lg:col-span-5 flex flex-col gap-12">
-          <motion.div 
-            variants={itemVars}
-            className="relative aspect-[4/5] bg-white border border-heritage-border p-12 flex items-center justify-center group"
-          >
-            {/* Fine Lined Frame */}
-            <div className="absolute inset-4 border border-heritage-border/40 pointer-events-none group-hover:border-heritage-accent/20 transition-colors duration-1000"></div>
+        {/* Right Content: Glass Visual */}
+        <motion.div variants={itemVars} className="relative group mt-8 lg:mt-0">
+          {/* Glowing Aura */}
+          <div className="absolute inset-0 bg-glass-accent/20 rounded-[3rem] blur-3xl group-hover:blur-[5rem] transition-all duration-700 opacity-50"></div>
+          
+          <div className="relative aspect-square glass-card p-8 md:p-12 flex items-center justify-center overflow-hidden">
+            {/* Inner Pattern */}
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
             
-            {/* The Logo: Pure and Elevated */}
-            <img
+            <motion.img
               src={logo}
               alt="Premier League"
-              className="w-full h-auto object-contain filter grayscale group-hover:grayscale-0 contrast-[1.1] transition-all duration-1000 scale-[0.8] group-hover:scale-[0.85]"
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="w-[70%] md:w-[75%] h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] dark:drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
             />
 
-            {/* Corner Markers */}
-            <div className="absolute top-0 left-0 w-8 h-px bg-heritage-accent"></div>
-            <div className="absolute top-0 left-0 w-px h-8 bg-heritage-accent"></div>
-            <div className="absolute bottom-0 right-0 w-8 h-px bg-heritage-accent"></div>
-            <div className="absolute bottom-0 right-0 w-px h-8 bg-heritage-accent"></div>
-          </motion.div>
-
-          <motion.div variants={itemVars} className="space-y-6 bg-heritage-text text-heritage-base p-10">
-            <div className="flex items-center gap-4">
-              <Trophy size={20} className="text-heritage-accent" />
-              <h3 className="text-[10px] font-black uppercase tracking-[4px]">Tactical Focus</h3>
+            {/* Floating Glass Accents */}
+            <div className="absolute top-6 md:top-10 left-6 md:left-10 p-3 md:p-4 bg-glass-surface backdrop-blur-md rounded-2xl border border-glass-border text-glass-highlight animate-bounce shadow-lg">
+              <Trophy size={20} className="md:w-7 md:h-7" />
             </div>
-            <p className="text-lg font-serif italic leading-snug">
-              "Tactics without data is just an opinion. Data without tactics is just numbers."
-            </p>
-            <div className="h-px w-12 bg-heritage-accent"></div>
-            <p className="text-[10px] uppercase tracking-[2px] opacity-40">Editor's Note — Season 24/25</p>
-          </motion.div>
-        </div>
+            <div className="absolute bottom-6 md:bottom-10 right-6 md:right-10 p-3 md:p-4 bg-glass-surface backdrop-blur-md rounded-2xl border border-glass-border text-glass-accent animate-pulse shadow-lg">
+              <Compass size={20} className="md:w-7 md:h-7" />
+            </div>
+          </div>
+        </motion.div>
 
       </div>
 
-      {/* Decorative Text Wrapper */}
+      {/* Background Typography */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.03 }}
-        transition={{ delay: 1.5, duration: 2 }}
-        className="fixed bottom-0 left-0 w-full overflow-hidden pointer-events-none whitespace-nowrap -mb-10 z-0"
+        transition={{ delay: 1, duration: 2 }}
+        className="fixed bottom-0 left-0 w-full overflow-hidden pointer-events-none whitespace-nowrap -mb-12 z-[-1]"
       >
-        <span className="text-[20vw] font-black uppercase tracking-tighter text-heritage-text">PREMIER ZONE</span>
+        <span className="text-[22vw] font-black uppercase tracking-tighter opacity-10">PREMIER ZONE</span>
       </motion.div>
     </motion.div>
   );
