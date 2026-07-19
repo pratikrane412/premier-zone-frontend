@@ -4,32 +4,22 @@
 @theme {
   --font-sans: "Plus Jakarta Sans", sans-serif;
 
-  /* Glassmorphism Palette Tokens */
-  --color-glass-accent: #8b5cf6; /* Vibrant Violet */
-  --color-glass-highlight: #38bdf8; /* Sky Blue */
+  /* Premium Football Palette Tokens (Tailwind 4 variables) */
+  --color-glass-accent: #37003c; /* Official EPL Deep Purple */
+  --color-glass-highlight: #e90052; /* Official EPL Vibrant Pink */
+  --color-glass-mint: #00ff85; /* Official EPL Neon Mint */
 }
 
 @layer base {
   :root {
-    --glass-base: #f1f5f9;
-    --glass-surface: rgba(15, 23, 42, 0.05);
-    --glass-border: rgba(15, 23, 42, 0.08);
-    --glass-text: #0f172a;
-    --glass-muted: #475569;
-    --glass-card-bg: rgba(255, 255, 255, 0.8);
-    --glass-card-border: rgba(255, 255, 255, 0.5);
-    --glass-blob-opacity: 0.15;
-  }
-
-  .dark {
-    --glass-base: #0f172a;
-    --glass-surface: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-text: #f8fafc;
-    --glass-muted: #94a3b8;
-    --glass-card-bg: rgba(255, 255, 255, 0.05);
-    --glass-card-border: rgba(255, 255, 255, 0.1);
-    --glass-blob-opacity: 0.4;
+    --glass-base: #f4f5f8; /* Crisp, athletic light gray background */
+    --glass-surface: rgba(55, 0, 60, 0.03); /* Soft purple-tinted surface */
+    --glass-border: rgba(55, 0, 60, 0.08); /* Precise thin purple-slate border */
+    --glass-text: #1e1b4b; /* Deep plum/navy near-black for perfect readability */
+    --glass-muted: #625f87; /* Medium purple-slate for secondary text */
+    --glass-card-bg: #ffffff; /* Solid premium white card surface */
+    --glass-card-border: rgba(55, 0, 60, 0.06);
+    --glass-blob-opacity: 0.08;
   }
 
   html {
@@ -41,56 +31,66 @@
   body {
     background-color: var(--glass-base);
     color: var(--glass-text);
-    @apply min-h-screen selection:bg-glass-accent/30 overflow-x-hidden transition-colors duration-500;
+    /* Pitch pattern grid background */
+    background-image: 
+      linear-gradient(to right, rgba(55, 0, 60, 0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(55, 0, 60, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    @apply min-h-screen selection:bg-glass-highlight/20 overflow-x-hidden transition-colors duration-500;
   }
 
   h1, h2, h3, h4 {
-    @apply font-extrabold tracking-tight;
+    @apply font-extrabold tracking-tight text-glass-accent;
   }
 }
 
 @layer components {
-  /* The Core Glass Container */
+  /* The Core Premium Football Card */
   .glass-card {
     background-color: var(--glass-card-bg);
     border: 1px solid var(--glass-card-border);
-    @apply backdrop-blur-xl rounded-[2rem] transition-all duration-500;
+    box-shadow: 0 4px 20px -2px rgba(55, 0, 60, 0.02), 0 2px 8px -1px rgba(55, 0, 60, 0.01);
+    @apply rounded-3xl transition-all duration-300;
   }
 
   .glass-card:hover {
-    @apply shadow-[0_20px_50px_-12px_rgba(139,92,246,0.25)];
-    border-color: var(--glass-accent);
+    box-shadow: 0 20px 45px -10px rgba(55, 0, 60, 0.08);
+    border-color: var(--color-glass-highlight);
+    @apply -translate-y-1;
   }
 
-  /* Vibrant Glow Button */
+  /* Vibrant Athletic Purple Button */
   .btn-glass {
-    @apply inline-flex items-center justify-center px-8 py-4 bg-glass-accent text-white font-bold rounded-2xl transition-all duration-300 active:scale-95 shadow-lg shadow-glass-accent/30 hover:shadow-glass-accent/50 hover:-translate-y-0.5;
+    background-color: var(--color-glass-accent);
+    color: #ffffff;
+    @apply inline-flex items-center justify-center px-8 py-4 font-black uppercase tracking-wider rounded-2xl transition-all duration-300 active:scale-95 shadow-lg shadow-purple-950/20 hover:shadow-purple-950/40 hover:-translate-y-0.5 hover:bg-[#230026];
   }
 
+  /* Outline Athletic Button */
   .btn-glass-outline {
-    background-color: var(--glass-surface);
-    border: 1px solid var(--glass-border);
+    background-color: #ffffff;
+    border: 1.5px solid var(--glass-border);
     color: var(--glass-text);
-    @apply inline-flex items-center justify-center px-8 py-4 backdrop-blur-md font-bold rounded-2xl transition-all duration-300 hover:bg-glass-accent/10;
+    @apply inline-flex items-center justify-center px-8 py-4 font-black uppercase tracking-wider rounded-2xl transition-all duration-300 hover:bg-purple-50/50 hover:border-glass-accent/30 active:scale-95;
   }
 
   /* Text Gradient */
   .text-glass-gradient {
-    @apply bg-gradient-to-br from-current via-current to-current/40 bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-glass-accent via-glass-accent to-glass-highlight bg-clip-text text-transparent;
   }
 
   .text-accent-gradient {
-    @apply bg-gradient-to-r from-glass-accent to-glass-highlight bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-glass-accent via-[#7f005c] to-glass-highlight bg-clip-text text-transparent;
   }
 
   /* Background Blobs */
   .blob {
     opacity: var(--glass-blob-opacity);
-    @apply absolute -z-10 blur-[120px] rounded-full animate-pulse transition-opacity duration-700;
+    @apply absolute -z-10 blur-[100px] rounded-full animate-pulse transition-opacity duration-700;
   }
 }
 
-/* Smooth custom scrollbar */
+/* Custom Webkit scrollbar matching the purple palette */
 ::-webkit-scrollbar {
   @apply w-2;
 }
@@ -98,5 +98,6 @@
   background-color: var(--glass-base);
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-glass-accent/20 rounded-full hover:bg-glass-accent/40;
+  @apply bg-glass-accent/15 rounded-full hover:bg-glass-accent/30;
 }
+

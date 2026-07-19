@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Search, Sun, Moon } from "lucide-react";
+import { Menu, X, ArrowRight, Search, Trophy } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
 import logo from "../assets/logo1.png";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { isDarkMode, toggleTheme } = useTheme();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -26,70 +24,86 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-500 ${
+      className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 ${
         scrolled
-          ? "bg-glass-base/60 backdrop-blur-2xl py-3 md:py-4 border-b border-white/10"
-          : "bg-transparent py-6 md:py-8 border-b border-transparent"
+          ? "bg-white/90 backdrop-blur-md py-3 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-slate-100"
+          : "bg-transparent py-5"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex justify-between items-center">
-        {/* Logo */}
+        {/* Logo / Brand */}
         <Link
           to="/"
-          className="flex items-center gap-2 md:gap-3 group"
+          className="flex items-center gap-3 group"
         >
-          <div className="relative p-1.5 md:p-2 bg-glass-surface rounded-lg md:rounded-xl border border-glass-border group-hover:border-glass-accent transition-all duration-500">
+          <div className="relative p-2 bg-purple-50 rounded-xl border border-purple-100/50 group-hover:border-purple-200 transition-all duration-300">
             <img
               src={logo}
-              alt="Logo"
-              className="h-6 w-auto md:h-8 object-contain transition-transform duration-500 group-hover:scale-110"
+              alt="Premier Zone"
+              className="h-8 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
             />
           </div>
-          <span className="text-lg md:text-xl font-black tracking-tighter">
-            Premier<span className="text-glass-accent">Zone</span>
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tighter text-slate-900 leading-none group-hover:text-purple-950 transition-colors">
+              PREMIER<span className="text-purple-600">ZONE</span>
+            </span>
+            <span className="text-[9px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
+              Stats Hub
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-10 items-center">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
-              className={`relative text-sm font-bold transition-all duration-300 ${
-                location.pathname === link.href ? "text-glass-accent" : "text-glass-muted hover:text-glass-accent"
-              }`}
-            >
-              {link.name}
-              {location.pathname === link.href && (
-                <motion.div layoutId="navUnderline" className="absolute -bottom-1 left-0 w-full h-0.5 bg-glass-accent rounded-full" />
-              )}
-            </Link>
-          ))}
+        <div className="hidden md:flex gap-8 items-center">
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.href;
+            return (
+              <Link
+                key={link.name}
+                to={link.href}
+                className={`relative text-[14px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? "text-purple-900 bg-purple-50"
+                    : "text-slate-600 hover:text-purple-700 hover:bg-slate-50"
+                }`}
+              >
+                {link.name}
+                {isActive && (
+                  <motion.div
+                    layoutId="navUnderline"
+                    className="absolute bottom-0 left-3 right-3 h-[3px] bg-purple-600 rounded-full"
+                  />
+                )}
+              </Link>
+            );
+          })}
           
+          <div className="w-[1px] h-6 bg-slate-200 mx-2" />
+
           <div className="flex items-center gap-2">
-            <button 
-              onClick={toggleTheme}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-glass-muted hover:text-glass-accent hover:border-glass-accent transition-all"
+            <div className="relative group/search">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-40 focus:w-60 bg-slate-50 border border-slate-200 text-xs font-semibold px-4 py-2 pl-9 rounded-full focus:outline-none focus:border-purple-500 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400"
+              />
+              <Search size={14} className="absolute left-3.5 top-2.5 text-slate-400 group-focus-within/search:text-purple-600 transition-colors" />
+            </div>
+            
+            <Link
+              to="/teams"
+              className="flex items-center gap-1.5 px-4 py-2 bg-purple-950 text-white hover:bg-purple-900 text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md shadow-purple-950/10 hover:shadow-purple-950/20 active:scale-95 transition-all duration-200"
             >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-glass-muted hover:text-glass-accent hover:border-glass-accent transition-all">
-              <Search size={18} />
-            </button>
+              <Trophy size={12} className="text-yellow-400" />
+              <span>Clubs</span>
+            </Link>
           </div>
         </div>
 
         {/* Mobile Toggle */}
-        <div className="md:hidden flex items-center gap-2 md:gap-3">
-          <button 
-            onClick={toggleTheme}
-            className="p-2.5 text-glass-text bg-white/5 rounded-xl border border-white/10"
-          >
-            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+        <div className="md:hidden flex items-center gap-2">
           <button
-            className="p-2.5 text-glass-text bg-white/5 rounded-xl border border-white/10"
+            className="p-2.5 text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={20} /> : <Menu size={20} />}
@@ -106,41 +120,62 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-glass-base/80 backdrop-blur-md z-[998]"
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[998]"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed top-0 right-0 w-[85%] h-screen bg-glass-base border-l border-white/10 z-[999] flex flex-col p-8"
+              className="md:hidden fixed top-0 right-0 w-[85%] max-w-[360px] h-screen bg-white border-l border-slate-100 z-[999] flex flex-col p-6 shadow-2xl"
             >
-              <div className="flex justify-between items-center mb-12">
-                <span className="text-2xl font-black text-white">Menu</span>
+              <div className="flex justify-between items-center mb-10">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-black text-slate-900 tracking-tighter">PREMIER<span className="text-purple-600">ZONE</span></span>
+                </div>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="p-3 bg-white/5 rounded-xl border border-white/10 text-white"
+                  className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200"
                 >
-                  <X size={24} />
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className={`flex justify-between items-center p-6 rounded-2xl border transition-all ${
-                      location.pathname === link.href 
-                        ? "bg-glass-accent/20 border-glass-accent text-white" 
-                        : "bg-white/5 border-white/5 text-glass-muted hover:border-white/20 hover:text-white"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <span className="text-2xl font-extrabold">{link.name}</span>
-                    <ArrowRight size={24} />
-                  </Link>
-                ))}
+              <div className="flex flex-col gap-3">
+                {navLinks.map((link) => {
+                  const isActive = location.pathname === link.href;
+                  return (
+                    <Link
+                      key={link.name}
+                      to={link.href}
+                      className={`flex justify-between items-center p-4 rounded-xl border transition-all duration-200 ${
+                        isActive 
+                          ? "bg-purple-50 border-purple-100 text-purple-900 font-extrabold" 
+                          : "bg-slate-50 border-slate-100 text-slate-700 font-bold hover:bg-slate-100 hover:border-slate-200"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="text-lg uppercase tracking-wider">{link.name}</span>
+                      <ArrowRight size={18} className={isActive ? "text-purple-600" : "text-slate-400"} />
+                    </Link>
+                  );
+                })}
+              </div>
+
+              <div className="mt-auto pt-6 border-t border-slate-100">
+                <div className="relative mb-4">
+                  <input
+                    type="text"
+                    placeholder="Search teams/players..."
+                    className="w-full bg-slate-50 border border-slate-200 text-xs font-semibold px-4 py-3 pl-10 rounded-xl focus:outline-none focus:border-purple-500 focus:bg-white transition-all text-slate-800"
+                  />
+                  <Search size={14} className="absolute left-3.5 top-3.5 text-slate-400" />
+                </div>
+                <div className="p-4 bg-purple-50/50 rounded-2xl border border-purple-100/50 text-center">
+                  <Trophy size={24} className="text-yellow-500 mx-auto mb-2" />
+                  <span className="text-xs font-black text-purple-950 uppercase tracking-widest">Premier Zone Dashboard</span>
+                  <p className="text-[10px] text-purple-800 mt-1 font-semibold">24/25 Season Statistics & Tactics</p>
+                </div>
               </div>
             </motion.div>
           </>
