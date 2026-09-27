@@ -1,13 +1,30 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight, Search, Trophy } from "lucide-react";
+import {
+  Menu,
+  X,
+  ArrowRight,
+  Search,
+  Trophy,
+  Scale,
+  Compass,
+  Calendar,
+  RefreshCw,
+  User,
+  LogOut,
+  LogIn,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo1.png";
+import { useAuth } from "../context/AuthContext";
+import { playersApi } from "../api/playersApi";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -15,27 +32,41 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleSyncData = async () => {
+    setSyncing(true);
+    try {
+      const res = await playersApi.syncLiveEpl();
+      alert(`Live EPL Data Synced! Updated: ${res.players_updated} players, ${res.fixtures_updated} fixtures.`);
+      window.location.reload();
+    } catch {
+      alert("Failed to sync live data. Please check backend connection.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const navLinks = [
     { name: "Home", href: "/" },
+    { name: "Table", href: "/standings" },
+    { name: "Fixtures", href: "/fixtures" },
+    { name: "Squad Builder", href: "/squad-builder", badge: "Pro" },
+    { name: "Compare", href: "/compare" },
+    { name: "Players", href: "/players" },
     { name: "Clubs", href: "/teams" },
-    { name: "Nations", href: "/nations" },
-    { name: "Tactics", href: "/positions" },
   ];
+
 
   return (
     <nav
       className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 ${
         scrolled
-          ? "bg-white/90 backdrop-blur-md py-3 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-slate-100"
+          ? "bg-white/95 backdrop-blur-md py-3 shadow-[0_4px_30px_rgba(0,0,0,0.03)] border-b border-slate-100"
           : "bg-transparent py-5"
       }`}
     >
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 flex justify-between items-center">
         {/* Logo / Brand */}
-        <Link
-          to="/"
-          className="flex items-center gap-3 group"
-        >
+        <Link to="/" className="flex items-center gap-3 group">
           <div className="relative p-2 bg-purple-50 rounded-xl border border-purple-100/50 group-hover:border-purple-200 transition-all duration-300">
             <img
               src={logo}
@@ -48,26 +79,31 @@ export default function Navbar() {
               PREMIER<span className="text-purple-600">ZONE</span>
             </span>
             <span className="text-[9px] font-bold tracking-widest text-slate-400 uppercase mt-0.5">
-              Stats Hub
+              Live Analytics Pro
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-8 items-center">
+        <div className="hidden lg:flex gap-6 items-center">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.href;
             return (
               <Link
                 key={link.name}
                 to={link.href}
-                className={`relative text-[14px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all duration-200 ${
+                className={`relative text-[13px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-1.5 ${
                   isActive
                     ? "text-purple-900 bg-purple-50"
                     : "text-slate-600 hover:text-purple-700 hover:bg-slate-50"
                 }`}
               >
-                {link.name}
+                <span>{link.name}</span>
+                {link.badge && (
+                  <span className="text-[9px] font-black uppercase px-1.5 py-0.2 bg-emerald-500 text-white rounded-md shadow-xs">
+                    {link.badge}
+                  </span>
+                )}
                 {isActive && (
                   <motion.div
                     layoutId="navUnderline"
@@ -77,31 +113,51 @@ export default function Navbar() {
               </Link>
             );
           })}
-          
-          <div className="w-[1px] h-6 bg-slate-200 mx-2" />
+        </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative group/search">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-40 focus:w-60 bg-slate-50 border border-slate-200 text-xs font-semibold px-4 py-2 pl-9 rounded-full focus:outline-none focus:border-purple-500 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400"
-              />
-              <Search size={14} className="absolute left-3.5 top-2.5 text-slate-400 group-focus-within/search:text-purple-600 transition-colors" />
+        {/* Action Controls & Auth */}
+        <div className="hidden md:flex items-center gap-3">
+          {/* Live Sync Trigger Button */}
+          <button
+            onClick={handleSyncData}
+            disabled={syncing}
+            title="Sync Live Data from Official Premier League API"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 text-xs font-black transition-colors border border-purple-100"
+          >
+            <RefreshCw size={13} className={syncing ? "animate-spin text-purple-600" : ""} />
+            <span>{syncing ? "Syncing..." : "Sync Live EPL"}</span>
+          </button>
+
+          <div className="w-[1px] h-6 bg-slate-200 mx-1" />
+
+          {/* User Auth Info */}
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-200">
+                <User size={14} className="text-purple-700" />
+                <span className="text-xs font-black text-slate-800">{user?.username}</span>
+              </div>
+              <button
+                onClick={logout}
+                title="Sign Out"
+                className="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
-            
+          ) : (
             <Link
-              to="/teams"
-              className="flex items-center gap-1.5 px-4 py-2 bg-purple-950 text-white hover:bg-purple-900 text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md shadow-purple-950/10 hover:shadow-purple-950/20 active:scale-95 transition-all duration-200"
+              to="/login"
+              className="flex items-center gap-1.5 px-4 py-2 bg-purple-950 hover:bg-purple-900 text-white text-xs font-extrabold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95"
             >
-              <Trophy size={12} className="text-yellow-400" />
-              <span>Clubs</span>
+              <LogIn size={13} />
+              <span>Sign In</span>
             </Link>
-          </div>
+          )}
         </div>
 
         {/* Mobile Toggle */}
-        <div className="md:hidden flex items-center gap-2">
+        <div className="lg:hidden flex items-center gap-2">
           <button
             className="p-2.5 text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
             onClick={() => setIsOpen(!isOpen)}
@@ -111,7 +167,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Sidebar */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -127,13 +183,13 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="md:hidden fixed top-0 right-0 w-[85%] max-w-[360px] h-screen bg-white border-l border-slate-100 z-[999] flex flex-col p-6 shadow-2xl"
+              className="lg:hidden fixed top-0 right-0 w-[85%] max-w-[360px] h-screen bg-white border-l border-slate-100 z-[999] flex flex-col p-6 shadow-2xl"
             >
-              <div className="flex justify-between items-center mb-10">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-black text-slate-900 tracking-tighter">PREMIER<span className="text-purple-600">ZONE</span></span>
-                </div>
-                <button 
+              <div className="flex justify-between items-center mb-8">
+                <span className="text-xl font-black text-slate-900 tracking-tighter">
+                  PREMIER<span className="text-purple-600">ZONE</span>
+                </span>
+                <button
                   onClick={() => setIsOpen(false)}
                   className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200"
                 >
@@ -141,41 +197,58 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.href;
                   return (
                     <Link
                       key={link.name}
                       to={link.href}
-                      className={`flex justify-between items-center p-4 rounded-xl border transition-all duration-200 ${
-                        isActive 
-                          ? "bg-purple-50 border-purple-100 text-purple-900 font-extrabold" 
-                          : "bg-slate-50 border-slate-100 text-slate-700 font-bold hover:bg-slate-100 hover:border-slate-200"
+                      className={`flex justify-between items-center p-3.5 rounded-2xl border transition-all ${
+                        isActive
+                          ? "bg-purple-50 border-purple-100 text-purple-900 font-extrabold"
+                          : "bg-slate-50 border-slate-100 text-slate-700 font-bold hover:bg-slate-100"
                       }`}
                       onClick={() => setIsOpen(false)}
                     >
-                      <span className="text-lg uppercase tracking-wider">{link.name}</span>
-                      <ArrowRight size={18} className={isActive ? "text-purple-600" : "text-slate-400"} />
+                      <span className="text-sm uppercase tracking-wider">{link.name}</span>
+                      <ArrowRight size={16} className={isActive ? "text-purple-600" : "text-slate-400"} />
                     </Link>
                   );
                 })}
               </div>
 
-              <div className="mt-auto pt-6 border-t border-slate-100">
-                <div className="relative mb-4">
-                  <input
-                    type="text"
-                    placeholder="Search teams/players..."
-                    className="w-full bg-slate-50 border border-slate-200 text-xs font-semibold px-4 py-3 pl-10 rounded-xl focus:outline-none focus:border-purple-500 focus:bg-white transition-all text-slate-800"
-                  />
-                  <Search size={14} className="absolute left-3.5 top-3.5 text-slate-400" />
-                </div>
-                <div className="p-4 bg-purple-50/50 rounded-2xl border border-purple-100/50 text-center">
-                  <Trophy size={24} className="text-yellow-500 mx-auto mb-2" />
-                  <span className="text-xs font-black text-purple-950 uppercase tracking-widest">Premier Zone Dashboard</span>
-                  <p className="text-[10px] text-purple-800 mt-1 font-semibold">24/25 Season Statistics & Tactics</p>
-                </div>
+              <div className="mt-auto pt-6 border-t border-slate-100 space-y-3">
+                <button
+                  onClick={handleSyncData}
+                  disabled={syncing}
+                  className="w-full py-2.5 bg-purple-50 text-purple-900 rounded-xl text-xs font-black flex items-center justify-center gap-2 border border-purple-100"
+                >
+                  <RefreshCw size={14} className={syncing ? "animate-spin" : ""} />
+                  <span>Sync Live Premier League Data</span>
+                </button>
+
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full py-2.5 bg-red-50 text-red-700 rounded-xl text-xs font-black flex items-center justify-center gap-2"
+                  >
+                    <LogOut size={14} />
+                    <span>Sign Out ({user?.username})</span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full py-2.5 bg-purple-950 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2"
+                  >
+                    <LogIn size={14} />
+                    <span>Sign In</span>
+                  </Link>
+                )}
               </div>
             </motion.div>
           </>
