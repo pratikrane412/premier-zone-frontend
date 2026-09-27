@@ -16,7 +16,7 @@ export const fixturesApi = {
     return response.data;
   },
 
-  // FotMob-style live match center details
+  // PremierZone live match center details
   getMatchCenter: async (fixtureId) => {
     const response = await client.get(`/api/fixtures/${fixtureId}/center/`);
     return response.data;

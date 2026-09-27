@@ -57,35 +57,35 @@ export default function SharedSquad() {
   });
 
   return (
-    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 md:px-8 max-w-[1400px] mx-auto relative">
-      <div className="border-b border-slate-200/60 pb-6 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 sm:px-6 md:px-10 lg:px-12 xl:px-16 w-full relative">
+      <div className="border-b border-slate-200/80 pb-6 mb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <Link to="/squad-builder" className="inline-flex items-center gap-1 text-xs font-bold text-purple-700 hover:text-purple-900 mb-2">
+          <Link to="/squad-builder" className="inline-flex items-center gap-1.5 text-xs font-black text-purple-700 hover:text-purple-900 mb-3 bg-purple-50 px-3 py-1.5 rounded-xl border border-purple-200/60 w-fit">
             <ArrowLeft size={14} /> Back to Squad Builder
           </Link>
-          <h1 className="text-2xl md:text-4xl font-black text-slate-900">{squad.name}</h1>
-          <p className="text-xs font-semibold text-slate-500">
-            Tactical Formation: <span className="font-extrabold text-purple-900">{squad.formation}</span> • Built by <span className="font-bold text-slate-800">{squad.user_name || 'Premier Scout'}</span>
+          <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight">{squad.name}</h1>
+          <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1">
+            Tactical Formation: <span className="font-black text-purple-950">{squad.formation}</span> • Built by <span className="font-extrabold text-slate-800">{squad.user_name || 'Premier Scout'}</span>
           </p>
         </div>
 
-        <div className="flex gap-4">
-          <div className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm text-center">
-            <p className="text-lg font-black text-purple-950">£{squad.calculated_value}M</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase">Total Value</p>
+        <div className="flex flex-wrap gap-3">
+          <div className="p-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs text-center min-w-[100px]">
+            <p className="text-xl font-black text-purple-950">£{squad.calculated_value}M</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total Value</p>
           </div>
-          <div className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm text-center">
-            <p className="text-lg font-black text-emerald-600">{squad.total_goals}</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase">Goals</p>
+          <div className="p-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs text-center min-w-[100px]">
+            <p className="text-xl font-black text-emerald-600">{squad.total_goals}</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Goals Scored</p>
           </div>
-          <div className="p-3 bg-white rounded-2xl border border-slate-100 shadow-sm text-center">
-            <p className="text-lg font-black text-amber-500">★ {squad.avg_rating}</p>
-            <p className="text-[9px] font-bold text-slate-400 uppercase">Avg Rating</p>
+          <div className="p-3.5 bg-white rounded-2xl border border-slate-200/80 shadow-xs text-center min-w-[100px]">
+            <p className="text-xl font-black text-amber-500">★ {squad.avg_rating}</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Avg Rating</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[620px] mx-auto">
+      <div className="max-w-[720px] mx-auto bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/80 shadow-sm">
         <TacticalPitch
           slots={formationSlots}
           lineup={lineupMap}

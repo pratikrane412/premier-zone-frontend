@@ -62,6 +62,16 @@ export function AuthProvider({ children }) {
     return data.user;
   };
 
+  const oauthLogin = async (payload) => {
+    const data = await authApi.oauthLogin(payload);
+    localStorage.setItem('access_token', data.tokens.access);
+    localStorage.setItem('refresh_token', data.tokens.refresh);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setToken(data.tokens.access);
+    setUser(data.user);
+    return data.user;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -71,6 +81,7 @@ export function AuthProvider({ children }) {
         loading,
         login,
         register,
+        oauthLogin,
         logout,
       }}
     >

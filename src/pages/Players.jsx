@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -9,25 +9,64 @@ import {
   Sparkles,
   ArrowUpDown,
   Filter,
+  X,
+  Trophy,
+  Shield,
+  Zap,
 } from "lucide-react";
 import { playersApi } from "../api/playersApi";
 import PlayerAvatar from "../components/common/PlayerAvatar";
 import TeamCrest from "../components/common/TeamCrest";
 
 export default function Players() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [players, setPlayers] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPos, setSelectedPos] = useState("");
+  const [selectedClub, setSelectedClub] = useState(searchParams.get("team") || "");
   const [ordering, setOrdering] = useState("-goals");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [teamsList, setTeamsList] = useState([]);
   const limit = 24;
 
-  const location = useLocation();
   const navigate = useNavigate();
-  const query = new URLSearchParams(location.search);
-  const teamFilter = query.get("team") || "";
+
+  // Load available clubs for filter dropdown
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const data = await playersApi.getTeams(false);
+        if (Array.isArray(data)) {
+          setTeamsList(data);
+        }
+      } catch (err) {
+        console.error("Failed to load clubs for player filter:", err);
+      }
+    };
+    fetchClubs();
+  }, []);
+
+  // Sync URL search params when selectedClub changes
+  useEffect(() => {
+    const urlTeam = searchParams.get("team") || "";
+    if (urlTeam !== selectedClub) {
+      setSelectedClub(urlTeam);
+    }
+  }, [searchParams]);
+
+  const handleClubChange = (club) => {
+    setSelectedClub(club);
+    setPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (club) {
+      newParams.set("team", club);
+    } else {
+      newParams.delete("team");
+    }
+    setSearchParams(newParams, { replace: true });
+  };
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -37,7 +76,7 @@ export default function Players() {
         const res = await playersApi.getAll({
           search: searchTerm.trim(),
           position: selectedPos,
-          team: teamFilter,
+          team: selectedClub,
           ordering: ordering,
           limit,
           offset,
@@ -53,7 +92,7 @@ export default function Players() {
 
     const debounce = setTimeout(fetchPlayers, 200);
     return () => clearTimeout(debounce);
-  }, [searchTerm, selectedPos, teamFilter, ordering, page]);
+  }, [searchTerm, selectedPos, selectedClub, ordering, page]);
 
   const totalPages = Math.ceil(totalCount / limit) || 1;
 
@@ -67,40 +106,45 @@ export default function Players() {
   };
 
   return (
-    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 md:px-8 max-w-[1400px] mx-auto relative">
-      {/* Background blobs */}
-      <div className="blob w-[350px] h-[350px] bg-purple-200/30 top-[-5%] left-[-5%]"></div>
-      <div className="blob w-[300px] h-[300px] bg-pink-100/30 bottom-[-5%] right-[-5%]"></div>
-
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-8 mb-8 relative z-10">
+    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 sm:px-6 md:px-10 lg:px-12 xl:px-16 w-full relative">
+      {/* Editorial Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/80 pb-8 mb-8 relative z-10">
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-100">
-            <Sparkles size={14} className="text-purple-700" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-50 border border-purple-200/60 shadow-xs">
+            <Sparkles size={13} className="text-purple-700" />
             <span className="text-[10px] font-black uppercase tracking-widest text-purple-950">
-              Scouting Database ({totalCount} Active Stars)
+              Scouting Database • {totalCount} Registered Athletes
             </span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900">
-            {teamFilter ? `${teamFilter} Squad` : "Premier League Players"}
+            {selectedClub ? `${selectedClub.replace(/-/g, " ")} Squad` : "Premier League Players"}
           </h1>
           <p className="text-xs md:text-sm font-semibold text-slate-500 max-w-xl">
-            Complete database of Premier League athletes with official photos, performance metrics, and valuations.
+            Complete database of Premier League athletes with official photos, performance metrics, expected goals (xG), and valuations.
           </p>
         </div>
 
-        {/* Quick Compare CTA */}
-        <Link
-          to="/compare"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-950 text-white font-extrabold text-xs shadow-md hover:bg-purple-900 transition-colors"
-        >
-          <Scale size={16} />
-          Head-to-Head Compare
-        </Link>
+        {/* Quick Compare & Squad Builder CTAs */}
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/compare"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-purple-300 text-slate-800 hover:text-purple-950 font-black text-xs shadow-xs transition-colors"
+          >
+            <Scale size={15} className="text-purple-700" />
+            Head-to-Head Compare
+          </Link>
+          <Link
+            to="/squad-builder"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-purple-950 text-white font-black text-xs shadow-sm hover:bg-purple-900 transition-colors"
+          >
+            <Zap size={15} className="text-amber-400" />
+            Draft in Squad Builder
+          </Link>
+        </div>
       </div>
 
-      {/* Search & Filter Toolbar */}
-      <div className="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm mb-8 relative z-10 flex flex-col md:flex-row gap-4 justify-between items-center">
+      {/* Search & Filter Command Strip */}
+      <div className="bg-white p-4 rounded-3xl border border-slate-200/80 shadow-xs mb-8 relative z-10 flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Search Input */}
         <div className="relative w-full md:w-80">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -112,12 +156,20 @@ export default function Players() {
               setSearchTerm(e.target.value);
               setPage(1);
             }}
-            className="w-full pl-10 pr-4 py-2 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-600 transition-colors"
+            className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-600 transition-colors"
           />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
 
         {/* Position Filter Buttons */}
-        <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+        <div className="flex gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {["", "GK", "DF", "MF", "FW"].map((pos) => (
             <button
               key={pos}
@@ -125,9 +177,9 @@ export default function Players() {
                 setSelectedPos(pos);
                 setPage(1);
               }}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
                 selectedPos === pos
-                  ? "bg-purple-950 text-white shadow-sm"
+                  ? "bg-purple-950 text-white shadow-xs"
                   : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"
               }`}
             >
@@ -136,45 +188,117 @@ export default function Players() {
           ))}
         </div>
 
-        {/* Ordering Dropdown */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          <ArrowUpDown size={14} className="text-slate-400" />
+        {/* Club Dropdown Filter */}
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <select
-            value={ordering}
-            onChange={(e) => {
-              setOrdering(e.target.value);
-              setPage(1);
-            }}
-            className="text-xs font-black text-slate-700 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl focus:outline-none cursor-pointer"
+            value={selectedClub}
+            onChange={(e) => handleClubChange(e.target.value)}
+            className="w-full md:w-auto text-xs font-black text-slate-700 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl focus:outline-none cursor-pointer"
           >
-            <option value="-goals">Most Goals</option>
-            <option value="-assists">Most Assists</option>
-            <option value="-rating">Highest Rated</option>
-            <option value="-market_value_eur">Highest Market Value</option>
-            <option value="-form">Best Form</option>
-            <option value="player_name">Alphabetical (A-Z)</option>
+            <option value="">All 20 Member Clubs</option>
+            {teamsList.map((team) => {
+              const name = typeof team === "string" ? team : team.name;
+              return (
+                <option key={name} value={name}>
+                  {name.replace(/-/g, " ")}
+                </option>
+              );
+            })}
           </select>
+
+          {/* Ordering Dropdown */}
+          <div className="flex items-center gap-1.5">
+            <ArrowUpDown size={14} className="text-slate-400 hidden sm:block" />
+            <select
+              value={ordering}
+              onChange={(e) => {
+                setOrdering(e.target.value);
+                setPage(1);
+              }}
+              className="text-xs font-black text-slate-700 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl focus:outline-none cursor-pointer"
+            >
+              <option value="-goals">Most Goals</option>
+              <option value="-assists">Most Assists</option>
+              <option value="-rating">Highest Rated</option>
+              <option value="-market_value_eur">Highest Market Value</option>
+              <option value="-form">Best Form</option>
+              <option value="player_name">Alphabetical (A-Z)</option>
+            </select>
+          </div>
         </div>
       </div>
 
+      {/* Active Filter Indicators */}
+      {(selectedClub || selectedPos || searchTerm) && (
+        <div className="flex items-center gap-2 mb-6 flex-wrap">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+            Active Filters:
+          </span>
+          {selectedClub && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-900 border border-purple-200 text-xs font-bold">
+              Club: {selectedClub.replace(/-/g, " ")}
+              <button onClick={() => handleClubChange("")} className="hover:text-purple-950">
+                <X size={12} />
+              </button>
+            </span>
+          )}
+          {selectedPos && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold">
+              Position: {selectedPos}
+              <button onClick={() => setSelectedPos("")} className="hover:text-slate-950">
+                <X size={12} />
+              </button>
+            </span>
+          )}
+          {searchTerm && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold">
+              "{searchTerm}"
+              <button onClick={() => setSearchTerm("")} className="hover:text-slate-950">
+                <X size={12} />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedPos("");
+              handleClubChange("");
+            }}
+            className="text-xs font-bold text-purple-700 hover:text-purple-900 ml-2"
+          >
+            Clear All
+          </button>
+        </div>
+      )}
+
       {/* Players Grid */}
       {loading ? (
-        <div className="py-24 text-center space-y-3">
+        <div className="py-24 text-center space-y-3 bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xs">
           <div className="w-12 h-12 border-3 border-purple-200 border-t-purple-900 rounded-full animate-spin mx-auto"></div>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-widest animate-pulse">
             Scanning Official Database...
           </p>
         </div>
       ) : players.length === 0 ? (
-        <div className="py-24 text-center bg-white rounded-3xl border border-slate-100 p-8">
-          <p className="text-sm font-bold text-slate-500">No players match your filters.</p>
+        <div className="py-24 text-center bg-white rounded-3xl border border-slate-200/80 p-8 shadow-xs">
+          <p className="text-sm font-bold text-slate-500">No players match your active filters.</p>
+          <button
+            onClick={() => {
+              setSearchTerm("");
+              setSelectedPos("");
+              handleClubChange("");
+            }}
+            className="mt-4 px-4 py-2 rounded-xl bg-purple-950 text-white font-black text-xs"
+          >
+            Reset Filters
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 relative z-10">
           {players.map((p) => (
             <div
               key={p.id}
-              className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-purple-200 hover:shadow-lg transition-all p-5 flex flex-col justify-between group relative overflow-hidden"
+              className="bg-white rounded-3xl border border-slate-200/80 shadow-xs hover:border-purple-300 hover:shadow-md transition-all p-5 flex flex-col justify-between group relative overflow-hidden"
             >
               {/* Top Row: Club & Position */}
               <div className="flex items-center justify-between mb-4">
@@ -184,7 +308,7 @@ export default function Players() {
                     teamName={p.team_name}
                     className="w-4 h-4 object-contain flex-shrink-0"
                   />
-                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 truncate max-w-[120px]">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 truncate max-w-[130px]">
                     {p.team_name}
                   </span>
                 </div>
@@ -223,7 +347,7 @@ export default function Players() {
               </div>
 
               {/* Stats Row */}
-              <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-50 text-center">
+              <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-100 text-center">
                 <div className="bg-slate-50 rounded-xl py-1.5">
                   <span className="text-xs font-black text-slate-800">{p.goals}</span>
                   <span className="block text-[8px] font-bold uppercase text-slate-400">Goals</span>
@@ -242,14 +366,14 @@ export default function Players() {
               <div className="mt-4 pt-2 flex items-center justify-between gap-2">
                 <button
                   onClick={() => navigate(`/compare?player1=${p.id}`)}
-                  className="flex-1 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 text-[10px] font-extrabold flex items-center justify-center gap-1 transition-colors"
+                  className="flex-1 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-950 text-[10px] font-extrabold flex items-center justify-center gap-1 transition-colors border border-purple-200/60"
                 >
-                  <Scale size={12} />
+                  <Scale size={12} className="text-purple-700" />
                   Compare
                 </button>
                 <Link
                   to="/squad-builder"
-                  className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-purple-950 text-white text-[10px] font-extrabold transition-colors"
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-purple-950 text-white text-[10px] font-extrabold transition-colors"
                 >
                   Draft
                 </Link>
@@ -264,17 +388,17 @@ export default function Players() {
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page <= 1}
-          className="p-2 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 shadow-sm text-slate-700"
+          className="p-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 shadow-xs text-slate-700"
         >
           <ChevronLeft size={18} />
         </button>
-        <span className="text-xs font-black text-purple-950 px-3">
+        <span className="text-xs font-black text-purple-950 px-3 bg-white py-2 rounded-xl border border-slate-200/80 shadow-xs">
           Page {page} of {totalPages}
         </span>
         <button
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page >= totalPages}
-          className="p-2 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 shadow-sm text-slate-700"
+          className="p-2.5 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 shadow-xs text-slate-700"
         >
           <ChevronRight size={18} />
         </button>

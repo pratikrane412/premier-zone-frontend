@@ -97,10 +97,7 @@ export default function Nations() {
     );
 
   return (
-    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 md:px-8 max-w-[1400px] mx-auto relative">
-      {/* Background Blobs */}
-      <div className="blob w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-purple-200/20 top-[-10%] right-[-5%]"></div>
-      <div className="blob w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-pink-100/20 bottom-[-5%] left-[-5%]"></div>
+    <div className="min-h-screen pt-24 md:pt-28 pb-20 px-4 sm:px-6 md:px-10 lg:px-12 xl:px-16 w-full relative">
 
       {/* Header Panel */}
       <header className="mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200/60 pb-8 md:pb-12 relative z-10">

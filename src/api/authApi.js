@@ -20,4 +20,9 @@ export const authApi = {
     const response = await client.post('/api/auth/refresh/', { refresh });
     return response.data;
   },
+
+  oauthLogin: async (payload) => {
+    const response = await client.post('/api/auth/oauth/', payload);
+    return response.data;
+  },
 };

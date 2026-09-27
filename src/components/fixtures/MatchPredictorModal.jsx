@@ -30,8 +30,6 @@ export default function MatchPredictorModal({ isOpen, onClose, fixture }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 relative overflow-hidden">
-        {/* Glow */}
-        <div className="blob w-[250px] h-[250px] bg-purple-200/40 top-[-10%] right-[-10%]"></div>
 
         {/* Close Button */}
         <button
