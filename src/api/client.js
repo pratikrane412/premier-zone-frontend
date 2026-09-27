@@ -1,6 +1,17 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const isProduction = 
+  Boolean(import.meta.env.PROD) || 
+  (typeof window !== 'undefined' && 
+   window.location.hostname !== 'localhost' && 
+   window.location.hostname !== '127.0.0.1');
+
+const envUrl = import.meta.env.VITE_API_URL;
+
+const API_BASE_URL = 
+  (envUrl && (!isProduction || !envUrl.includes('localhost')))
+    ? envUrl
+    : (isProduction ? 'https://premier-backend.onrender.com' : 'http://localhost:8000');
 
 const client = axios.create({
   baseURL: API_BASE_URL,
