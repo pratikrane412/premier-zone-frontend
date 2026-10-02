@@ -44,7 +44,11 @@ export default function Navbar() {
     setSyncing(true);
     try {
       const res = await playersApi.syncLiveEpl();
-      alert(`Live EPL Data Synced! Updated: ${res.players_updated} players, ${res.fixtures_updated} fixtures.`);
+      if (res?.players_updated !== undefined) {
+        alert(`Live EPL Data Synced! Updated: ${res.players_updated} players, ${res.fixtures_updated} fixtures.`);
+      } else {
+        alert(res?.message || "Live EPL data synchronization initiated successfully!");
+      }
       window.location.reload();
     } catch {
       alert("Failed to sync live data. Please check backend connection.");
